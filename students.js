@@ -21,3 +21,5 @@ const students = [
     gpa: 3.9,
   },
 ];
+
+export default students;

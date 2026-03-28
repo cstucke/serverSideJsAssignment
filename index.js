@@ -1,19 +1,22 @@
 import express from "express";
 import cors from "cors";
-import students from "./students";
+import studentRouter from "./routes/studentRoutes.js";
 
 const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.json())
 
-app.get("/", (req, res) => {
-  res.json({ students });
-});
+app.use("/students", studentRouter)
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+// app.get("/", (req, res) => {
+//   res.json({ students });
+// });
 
 // NODEMON
 
