@@ -1,47 +1,26 @@
-import students from "../students.js";
+import Student from "../models/studentModel.js";
 
-const getAllStudentsService = () => {
-  return students;
+const getAllStudentsService = async () => {
+  return await Student.find();
 };
 
-const getStudentByIdService = (id) => {
-  return students.find((student) => student.id === Number(id));
+const getStudentByIdService = async (id) => {
+  return await Student.findById(id);
 };
 
-const createStudentService = (studentData) => {
-  const newStudent = {
-    id: students.length + 1,
-    ...studentData,
-  };
-
-  students.push(newStudent);
-  return newStudent;
+const createStudentService = async (studentData) => {
+  return await Student.create(studentData);
 };
 
-const updateStudentService = (id, studentData) => {
-  const student = students.find((student) => student.id === Number(id));
-
-  if (!student) {
-    return null;
-  }
-
-  student.name = studentData.name;
-  student.email = studentData.email;
-  student.major = studentData.major;
-  student.gpa = studentData.gpa;
-
-  return student;
+const updateStudentService = async (id, studentData) => {
+  return await Student.findByIdAndUpdate(id, studentData, {
+    new: true,
+    runValidators: true,
+  });
 };
 
-const deleteStudentService = (id) => {
-  const index = students.findIndex((student) => student.id === Number(id));
-
-  if (index === -1) {
-    return null;
-  }
-
-  const deletedStudents = students.splice(index, 1);
-  return deletedStudents[0];
+const deleteStudentService = async (id) => {
+  return await Student.findByIdAndDelete(id);
 };
 
 export {
