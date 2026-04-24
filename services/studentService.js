@@ -1,4 +1,7 @@
+import bcrypt from "bcrypt";
 import Student from "../models/studentModel.js";
+
+const SALT_ROUNDS = 10;
 
 const getAllStudentsService = async () => {
   return await Student.find();
@@ -9,10 +12,25 @@ const getStudentByIdService = async (id) => {
 };
 
 const createStudentService = async (studentData) => {
-  return await Student.create(studentData);
+  const existingStudent = await Student.findOne({ email: studentData.email });
+
+  if (existingStudent) {
+    throw new Error("Student already exists");
+  }
+
+  const hashedPassword = await bcrypt.hash(studentData.password, SALT_ROUNDS);
+
+  return await Student.create({
+    ...studentData,
+    password: hashedPassword,
+  });
 };
 
 const updateStudentService = async (id, studentData) => {
+  if (studentData.password) {
+    studentData.password = await bcrypt.hash(studentData.password, SALT_ROUNDS);
+  }
+
   return await Student.findByIdAndUpdate(id, studentData, {
     new: true,
     runValidators: true,

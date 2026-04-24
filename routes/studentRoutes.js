@@ -1,12 +1,34 @@
 import express from "express";
-import { getAllStudents, getStudentById, createStudent, updateStudent, deleteStudent } from "../controllers/studentController.js";
+import {
+  getAllStudents,
+  getStudentById,
+  createStudent,
+  updateStudent,
+  deleteStudent,
+} from "../controllers/studentController.js";
+import multerConfig from "../middleware/multer-config.js";
+import validateStudent from "../middleware/validateStudent.js";
+import authCheck from "../middleware/auth-middleware.js";
 
 const studentRouter = express.Router();
 
-studentRouter.get("/", getAllStudents);
-studentRouter.get("/:id", getStudentById);
-studentRouter.post("/", createStudent);
-studentRouter.put("/:id", updateStudent);
-studentRouter.delete("/:id", deleteStudent);
+studentRouter.post(
+  "/signup",
+  (req, res, next) => {
+    multerConfig(req, res, (err) => {
+      if (err) {
+        return res.status(400).json({ message: err.message });
+      }
+      next();
+    });
+  },
+  validateStudent,
+  createStudent
+);
+
+studentRouter.get("/", authCheck, getAllStudents);
+studentRouter.get("/:id", authCheck, getStudentById);
+studentRouter.put("/:id", authCheck, updateStudent);
+studentRouter.delete("/:id", authCheck, deleteStudent);
 
 export default studentRouter;
