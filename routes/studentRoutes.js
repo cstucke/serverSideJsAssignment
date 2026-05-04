@@ -10,6 +10,7 @@ import {
 import multerConfig from "../middleware/multer-config.js";
 import validateStudent from "../middleware/validateStudent.js";
 import authCheck from "../middleware/auth-middleware.js";
+import checkOwnership from "../middleware/ownership-middleware.js";
 
 const studentRouter = express.Router();
 
@@ -28,9 +29,9 @@ studentRouter.post(
 );
 
 studentRouter.get("/", authCheck, getAllStudents);
-studentRouter.get("/:id", authCheck, getStudentById);
-studentRouter.put("/:id", authCheck, updateStudent);
-studentRouter.delete("/:id", authCheck, deleteStudent);
+studentRouter.get("/:id", authCheck, checkOwnership, getStudentById);
+studentRouter.put("/:id", authCheck, checkOwnership, updateStudent);
+studentRouter.delete("/:id", authCheck, checkOwnership, deleteStudent);
 studentRouter.post("/login", loginStudent);
 
 export default studentRouter;
