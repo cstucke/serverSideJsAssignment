@@ -41,10 +41,15 @@ const deleteStudentService = async (id) => {
   return await Student.findByIdAndDelete(id);
 };
 
+const getStudentByEmailService = async (email) => {
+  return await Student.findOne({ email });
+};
+
 export {
   getAllStudentsService,
   getStudentByIdService,
   createStudentService,
   updateStudentService,
   deleteStudentService,
+  getStudentByEmailService
 };

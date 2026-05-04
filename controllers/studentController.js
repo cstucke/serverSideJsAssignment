@@ -5,8 +5,10 @@ import {
   createStudentService,
   updateStudentService,
   deleteStudentService,
+  getStudentByEmailService
 } from "../services/studentService.js";
 import { toStudentDTO, toPublicStudentDTO } from "../dto/studentDTO.js";
+import bcrypt from "bcrypt";
 
 const getAllStudents = async (req, res) => {
   try {
@@ -92,10 +94,50 @@ const deleteStudent = async (req, res) => {
   }
 };
 
+const loginStudent = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required" });
+    }
+
+    const student = await getStudentByEmailService(email);
+
+    if (!student) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const passwordMatches = await bcrypt.compare(password, student.password);
+
+    if (!passwordMatches) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const token = jwt.sign(
+      { userId: student._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    res.status(200).json({
+      token,
+      user: toStudentDTO(student),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export {
   getAllStudents,
   getStudentById,
   createStudent,
   updateStudent,
   deleteStudent,
+  loginStudent
 };

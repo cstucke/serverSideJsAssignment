@@ -5,6 +5,7 @@ import {
   createStudent,
   updateStudent,
   deleteStudent,
+  loginStudent
 } from "../controllers/studentController.js";
 import multerConfig from "../middleware/multer-config.js";
 import validateStudent from "../middleware/validateStudent.js";
@@ -30,5 +31,6 @@ studentRouter.get("/", authCheck, getAllStudents);
 studentRouter.get("/:id", authCheck, getStudentById);
 studentRouter.put("/:id", authCheck, updateStudent);
 studentRouter.delete("/:id", authCheck, deleteStudent);
+studentRouter.post("/login", loginStudent);
 
 export default studentRouter;
